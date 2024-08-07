@@ -37,7 +37,12 @@ const Home = () => {
         dataLength={stories.length}
         next={fetchMoreStories}
         hasMore={hasMore}
-        loader={<h4>Loading...</h4>}
+        loader={
+        <img
+          alt="Loading"
+          width="200px"
+          src="https://cdn.dribbble.com/users/2882885/screenshots/7861928/media/a4c4da396c3da907e7ed9dd0b55e5031.gif"
+        />}
         endMessage={<p>No more stories to show</p>} // Displaying message to user if no more stories to fetch
       >
         {stories.map((story) => {
