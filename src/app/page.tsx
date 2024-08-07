@@ -14,7 +14,7 @@ const Home = () => {
 
   const fetchMoreStories = async () => {
     try {
-      const topStories = await getTopStories(page, ITEMS_PER_PAGE);
+      const topStories = await getTopStories();
       setStories((prevStories) => [...prevStories, ...topStories]);
       setPage((prevPage) => prevPage + 1);
       if (topStories.length < ITEMS_PER_PAGE) {
@@ -22,13 +22,48 @@ const Home = () => {
       }
     } catch (error) {
       console.error("Error fetching more stories:", error);
-      setHasMore(false); // Stops infinite scroll, if error occurs
+      setHasMore(false); // Stops infinite scroll if an error occurs
     }
   };
+  
+
+  useEffect(() => {
+    fetchMoreStories(); // Initial fetching of data
+  }, []);
 
   return (
     <main>
-      <p>Loading...</p>
+      <InfiniteScroll
+        dataLength={stories.length}
+        next={fetchMoreStories}
+        hasMore={hasMore}
+        loader={<h4>Loading...</h4>}
+        endMessage={<p>No more stories to show</p>} // Displaying message to user if no more stories to fetch
+      >
+        {stories.map((story) => {
+          const url = story.url ? new URL(story.url) : null;
+
+          return (
+            <div className="leading-none mb-4" key={story.id}>
+              <a
+                title={story.title}
+                href={story.url || `/${story.id}`}
+                target={url?.host ? "_blank" : ""}
+                className="pb-1 whitespace-nowrap text-ellipsis overflow-hidden block font-bold visited:text-slate-500"
+              >
+                {story.title}
+              </a>
+              <div className="text-xs text-slate-700">
+                {url?.host ? `${url?.host} - ` : ""}
+                <Link href={`/${story.id}`}>
+                  {story.score} poäng - {story.descendants || "Inga"} kommentarer -{" "}
+                  {Math.floor(Date.now() / 1000 - story.time)} sekunder sedan
+                </Link>
+              </div>
+            </div>
+          );
+        })}
+      </InfiniteScroll>
     </main>
   );
 };
