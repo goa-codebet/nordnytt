@@ -8,16 +8,27 @@ export default function Home() {
   const [start, setStart] = useState(0);
   const limit = 10;
   const [topstories, setTopStories] = useState([]);
+  const [message, setMessage] = useState('Läser in nyheter...');
   const scrollTrigger = useRef(null);
 
   useEffect(() => {
     const fetchStories = async () => {
-      const newStories = await getTopStories(start, limit);
-      setTopStories((prevStories) => [...prevStories, ...newStories]);
+      setMessage('Läser in nyheter...');
+      try {
+        const newStories = await getTopStories(start, limit);
+        if (newStories.length < limit) {
+          setMessage('Det finns inte fler nyheter att läsa in.');
+        } else {
+          setMessage('Läser in nyheter...');
+        }
+        setTopStories((prevStories) => [...prevStories, ...newStories]);
+      } catch (error) {
+        console.error('Failed to fetch stories:', error);
+        setMessage('Något gick fel vid inläsning av nyheter.');
+      }
     };
-
     fetchStories();
-  }, [start]);
+  }, [start, limit]);
 
   useEffect(() => {
     if (!window.IntersectionObserver) return;
@@ -69,7 +80,7 @@ export default function Home() {
         );
       })}
       <div ref={scrollTrigger} className='text-s mt-4 mb-4'>
-        <p>Läser in nyheter</p>
+        <p>{message}</p>
       </div>
     </main>
   );
