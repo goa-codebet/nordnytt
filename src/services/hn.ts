@@ -7,7 +7,8 @@ export const getTopStories = async ():Promise<Story[]> => {
     }
   }).then(res => res.json());
   
-  return Promise.all(topstories.splice(0, 10).map(id => fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, {
+  //Ändrar från 10 resultat till 100 i mappen
+  return Promise.all(topstories.splice(0, 100).map(id => fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, {
     next: {
       revalidate: 120
     }
