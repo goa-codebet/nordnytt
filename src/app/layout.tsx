@@ -11,10 +11,13 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: { id?: string };
 }>) {
   const stories = await getTopStories();
+  const currentId = params?.id ? parseInt(params.id, 10) : 0;
   return (
     <html lang='sv'>
       <body className='bg-slate-100'>
@@ -29,7 +32,7 @@ export default async function RootLayout({
             />
             Nördnytt! 🤓
           </a>
-          <KeyboardNavigator stories={stories} currentArticleId={0} />
+          <KeyboardNavigator stories={stories} currentArticleId={currentId} />
 
           <div>{children}</div>
 
