@@ -20,6 +20,7 @@ export const KeyboardNavigator = ({
 
   useEffect(() => {
     let currentId = currentArticleId;
+
     if (pathname !== '/') {
       const pathId = pathname.replace('/', '');
       if (pathId) {
@@ -46,8 +47,6 @@ export const KeyboardNavigator = ({
 
               if (story.url) {
                 window.open(story.url, '_blank');
-              } else {
-                router.push(`/${story.id}`);
               }
             }
 
@@ -59,11 +58,13 @@ export const KeyboardNavigator = ({
       } else if (key === 'n') {
         if (currentIndex !== -1 && currentIndex < stories.length - 1) {
           const nextStory = stories[currentIndex + 1];
+
           router.push(`/${nextStory.id}`);
         }
       } else if (key === 'p') {
         if (currentIndex !== -1 && currentIndex > 0) {
           const prevStory = stories[currentIndex - 1];
+
           router.push(`/${prevStory.id}`);
         }
       }
