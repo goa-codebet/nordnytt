@@ -6,9 +6,13 @@ import { useEffect, useRef, useState } from 'react';
 
 interface KeyboardNavigatorProps {
   stories: Story[];
+  currentArticleId: number;
 }
 
-export const KeyboardNavigator = ({ stories }: KeyboardNavigatorProps) => {
+export const KeyboardNavigator = ({
+  stories,
+  currentArticleId,
+}: KeyboardNavigatorProps) => {
   const router = useRouter();
   const [input, setInput] = useState('');
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);

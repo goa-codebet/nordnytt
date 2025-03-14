@@ -1,17 +1,20 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import Image from 'next/image';
+import { KeyboardNavigator } from '@/components/keyboard-navigator';
+import { getTopStories } from '@/services/hn';
 
 export const metadata: Metadata = {
   title: 'Nördnytt! 🤓',
   description: 'Senaste från HackerNews',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const stories = await getTopStories();
   return (
     <html lang='sv'>
       <body className='bg-slate-100'>
@@ -26,8 +29,9 @@ export default function RootLayout({
             />
             Nördnytt! 🤓
           </a>
+          <KeyboardNavigator stories={stories} currentArticleId={0} />
 
-          {children}
+          <div>{children}</div>
 
           <div className='bg-slate-200 text-slate-600 p-2 text-sm'>
             <p>

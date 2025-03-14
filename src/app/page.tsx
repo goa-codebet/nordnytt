@@ -1,4 +1,3 @@
-import { KeyboardNavigator } from '@/components/keyboard-navigator';
 import { getTopStories } from '@/services/hn';
 import Link from 'next/link';
 
@@ -7,7 +6,6 @@ export default async function Home() {
 
   return (
     <main>
-      <KeyboardNavigator stories={topstories} />
       {topstories.map((story, index) => {
         const url = story.url ? new URL(story.url) : null;
 
