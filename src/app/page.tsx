@@ -10,16 +10,31 @@ interface PageProps {
 
 export default async function Home({ searchParams }: PageProps) {
   const pageSize = 10;
-  const currentPage = parseInt(searchParams.page || "1", 10);
 
-  // Fetch full list of top story IDs
+  // Parse the requested page; default to 1 if not specified or invalid
+  let requestedPage = parseInt(searchParams.page || "1", 10);
+  if (Number.isNaN(requestedPage) || requestedPage < 1) {
+    requestedPage = 1;
+  }
+
+  // Fetch the full list of top story IDs
   const allIds: number[] = await fetch(
     "https://hacker-news.firebaseio.com/v0/topstories.json",
     { next: { revalidate: 120 } }
   ).then((res) => res.json());
 
-  // Calculate total pages and determine the current slice
+  // Calculate total pages
   const totalPages = Math.ceil(allIds.length / pageSize);
+
+  // If the requested page is greater than totalPages, clamp it
+  if (requestedPage > totalPages) {
+    requestedPage = totalPages;
+  }
+
+  // Now we have a guaranteed valid page number
+  const currentPage = requestedPage;
+
+  // Determine the slice of IDs for the current page
   const startIndex = (currentPage - 1) * pageSize;
   const currentIds = allIds.slice(startIndex, startIndex + pageSize);
 
