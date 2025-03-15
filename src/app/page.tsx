@@ -7,16 +7,23 @@ interface PageProps {
 }
 
 export default async function Home({ searchParams }: PageProps) {
+  const pageSize = 10;
   const currentPage = parseInt(searchParams.page || "1", 10);
 
-  // Fetch the complete list of top story IDs from HackerNews
+  // Fetch full list of top story IDs
   const allIds: number[] = await fetch(
     "https://hacker-news.firebaseio.com/v0/topstories.json",
     { next: { revalidate: 120 } }
   ).then((res) => res.json());
 
+  // Calculate total pages and determine the current slice
+  const totalPages = Math.ceil(allIds.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const currentIds = allIds.slice(startIndex, startIndex + pageSize);
+
+  // Fetch stories for the current page
   const topstories = await Promise.all(
-    allIds.splice(0, 10).map((id) =>
+    currentIds.map((id) =>
       fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, {
         next: { revalidate: 120 },
       }).then((res) => res.json())
@@ -25,7 +32,9 @@ export default async function Home({ searchParams }: PageProps) {
 
   return (
     <main>
-      <p>Current Page: {currentPage}</p>
+      <p>
+        Current Page: {currentPage} of {totalPages}
+      </p>
       {topstories.map((story: any, index: number) => {
         const url = story.url ? new URL(story.url) : null;
         return (
@@ -36,7 +45,7 @@ export default async function Home({ searchParams }: PageProps) {
               target={url?.host ? "_blank" : ""}
               className="pb-1 whitespace-nowrap text-ellipsis overflow-hidden block font-bold visited:text-slate-500"
             >
-              {index + 1}. {story.title}
+              {startIndex + index + 1}. {story.title}
             </a>
             <div className="text-xs text-slate-700">
               {url?.host ? `${url.host} - ` : ""} 
