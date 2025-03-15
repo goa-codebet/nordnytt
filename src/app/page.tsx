@@ -1,4 +1,3 @@
-import { getTopStories } from "@/services/hn";
 import Link from "next/link";
 
 interface PageProps {
@@ -8,15 +7,26 @@ interface PageProps {
 }
 
 export default async function Home({ searchParams }: PageProps) {
-  // Parse the current page from URL; default to 1 if missing
   const currentPage = parseInt(searchParams.page || "1", 10);
 
-  const topstories = await getTopStories();
+  // Fetch the complete list of top story IDs from HackerNews
+  const allIds: number[] = await fetch(
+    "https://hacker-news.firebaseio.com/v0/topstories.json",
+    { next: { revalidate: 120 } }
+  ).then((res) => res.json());
+
+  const topstories = await Promise.all(
+    allIds.splice(0, 10).map((id) =>
+      fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, {
+        next: { revalidate: 120 },
+      }).then((res) => res.json())
+    )
+  );
 
   return (
     <main>
       <p>Current Page: {currentPage}</p>
-      {topstories.map((story, index) => {
+      {topstories.map((story: any, index: number) => {
         const url = story.url ? new URL(story.url) : null;
         return (
           <div key={story.id} className="leading-none mb-4">
