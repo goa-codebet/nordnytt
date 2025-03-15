@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Story } from "@/types";
 
 interface PageProps {
   searchParams: {
@@ -21,8 +22,8 @@ export default async function Home({ searchParams }: PageProps) {
   const startIndex = (currentPage - 1) * pageSize;
   const currentIds = allIds.slice(startIndex, startIndex + pageSize);
 
-  // Fetch stories for the current page
-  const topstories = await Promise.all(
+  // Fetch the stories for the current page with proper type
+  const topstories: Story[] = await Promise.all(
     currentIds.map((id) =>
       fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, {
         next: { revalidate: 120 },
@@ -35,7 +36,7 @@ export default async function Home({ searchParams }: PageProps) {
       <p>
         Current Page: {currentPage} of {totalPages}
       </p>
-      {topstories.map((story: any, index: number) => {
+      {topstories.map((story, index) => {
         const url = story.url ? new URL(story.url) : null;
         return (
           <div key={story.id} className="leading-none mb-4">
