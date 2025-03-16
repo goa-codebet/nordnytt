@@ -11,10 +11,11 @@ interface PaginatorProps {
   infoClass?: string;
 }
 
+// button width is 30px
 const styles = {
   container: "mt-4 mb-4 flex items-center justify-between",
   button:
-    "px-4 py-2 bg-gray-200 text-sm min-w-25 text-center hover:bg-gray-300 transition-colors",
+    "px-4 py-2 bg-gray-200 text-sm min-w-32 text-center hover:bg-gray-300 transition-colors",
   buttonDisabled: "opacity-50 cursor-not-allowed bg-gray-100",
   info: "text-slate-500 text-sm",
 };
