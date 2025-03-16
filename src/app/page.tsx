@@ -1,7 +1,6 @@
 import { getTopStoryIDs, getStoriesByIDs } from "@/services/hn";
 import { STORIES_PER_PAGE } from "@/lib/constants";
 import StoriesList from "@/app/components/StoriesList";
-import { Story } from "@/types";
 import Paginator from "@/app/components/Paginator";
 
 const NO_STORIES_MESSAGE = "No stories available.";
