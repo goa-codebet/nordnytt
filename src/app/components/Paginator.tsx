@@ -54,6 +54,8 @@ export default function Paginator({
         className={`${buttonClass} ${
           isPrevDisabled ? styles.buttonDisabled : ""
         }`}
+        aria-disabled={isPrevDisabled}
+        aria-label="Go to previous page"
       >
         ← Previous
       </button>
@@ -65,6 +67,8 @@ export default function Paginator({
         className={`${buttonClass} ${
           isNextDisabled ? styles.buttonDisabled : ""
         }`}
+        aria-disabled={isNextDisabled}
+        aria-label="Go to next page"
       >
         Next →
       </button>
