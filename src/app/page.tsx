@@ -28,10 +28,7 @@ export default async function StoriesPage({
           <Paginator page={page} total={totalPages} />
         </>
       ) : (
-        <>
-          <p className="text-center">{NO_STORIES_MESSAGE}</p>
-          <Paginator page={page} total={totalPages} />
-        </>
+        <p className="text-center">{NO_STORIES_MESSAGE}</p>
       )}
     </main>
   );
