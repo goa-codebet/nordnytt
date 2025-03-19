@@ -1,8 +1,16 @@
 import { getTopStories } from "@/services/hn";
 import Link from "next/link";
 
-export default async function Home() {
-  const topstories = await getTopStories();
+export default async function Home({ searchParams }: { searchParams: { page?: string } }) {
+
+  const page = searchParams.page ? parseInt(searchParams.page) : 1;
+  const pageSize = 10;
+
+  const topstories = await getTopStories(page, pageSize);
+
+  const totalStories = 500;
+  const totalPages = Math.ceil(totalStories / pageSize );
+
 
   return (
     <main>
@@ -16,6 +24,28 @@ export default async function Home() {
           </div>
         )
       }) }
+      
+      <div className="flex justify-between items-center mt-6 pb-4">
+        {page > 1 ? (
+          <Link href={`/?page=${page - 1}`} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+            Föregående
+          </Link>
+        ) : (
+          <div className="w-[90px]"></div>
+        )}
+
+        <span className="flex-grow text-center text-sm text-gray-700">
+          Sida {page} av {totalPages}
+        </span>
+
+        {page < totalPages ? (
+          <Link href={`/?page=${page + 1}`} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+            Nästa
+          </Link>
+        ) : (
+          <div className="w-[90px]"></div>
+        )}
+      </div>
     </main>
   );
 }
