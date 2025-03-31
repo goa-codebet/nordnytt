@@ -32,9 +32,17 @@ export default function Stories() {
         );
       })}
       <div ref={observerTarget}></div>
-      {storiesLeft !== null && storiesLeft <= 0 && <div>Inga Stories kvar</div>}
-      {loading && <div>Laddar Stories...</div>}
-      {error && <div>{error}</div>}
+      {storiesLeft !== null && storiesLeft <= 0 && (
+        <div className="text-center text-gray-500 mt-4">Inga Stories kvar</div>
+      )}
+      {loading && (
+        <div className="text-center text-blue-500 mt-4 animate-pulse">
+          Laddar Stories...
+        </div>
+      )}
+      {error && (
+        <div className="text-center text-red-500 mt-4 font-bold">{error}</div>
+      )}
     </main>
   );
 }
