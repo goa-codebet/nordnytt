@@ -4,7 +4,7 @@ import Link from "next/link";
 import useStories from "../hooks/useStories";
 
 export default function Stories() {
-  const { stories, loading, error, observerTarget } = useStories();
+  const { stories, storiesLeft, loading, error, observerTarget } = useStories();
 
   return (
     <main>
@@ -32,6 +32,7 @@ export default function Stories() {
         );
       })}
       <div ref={observerTarget}></div>
+      {storiesLeft !== null && storiesLeft <= 0 && <div>Inga Stories kvar</div>}
       {loading && <div>Laddar Stories...</div>}
       {error && <div>{error}</div>}
     </main>

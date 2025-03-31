@@ -7,28 +7,32 @@ export default function useStories() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [_page, setPage] = useState<number>(1);
+  const [storiesLeft, setStoriesLeft] = useState<number | null>(null);
+  const observerTarget = useRef(null);
+
   const getStories = async (page: number) => {
     if (loading) return;
     setLoading(true);
-    const limit = 10;
+    const limit = 30;
     try {
-      const newStories = await getTopStories(limit, (page - 1) * limit);
+      const { data, left } = await getTopStories(limit, (page - 1) * limit);
       setStories((prev) => {
-        return [...prev, ...newStories];
+        return [...prev, ...data];
       });
+      setStoriesLeft(left);
       setError(null);
     } catch (error) {
+      console.error(error);
       setError("Kunde inte hämta stories");
     }
     setLoading(false);
   };
 
-  const observerTarget = useRef(null);
-
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
+          if (storiesLeft !== null && storiesLeft <= 0) return;
           setPage((prevPage) => {
             getStories(prevPage);
             const nextPage = prevPage + 1;
@@ -49,5 +53,5 @@ export default function useStories() {
     };
   }, [observerTarget]);
 
-  return { stories, loading, error, observerTarget };
+  return { stories, storiesLeft, loading, error, observerTarget };
 }

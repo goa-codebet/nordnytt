@@ -1,9 +1,9 @@
 import { Comment, Story } from "@/types";
 
 export const getTopStories = async (
-  limit: number = 10,
+  limit: number = 30,
   offset: number = 0
-): Promise<Story[]> => {
+): Promise<{ data: Story[]; left: number }> => {
   const topstories: number[] = await fetch(
     "https://hacker-news.firebaseio.com/v0/topstories.json",
     {
@@ -13,7 +13,7 @@ export const getTopStories = async (
     }
   ).then((res) => res.json());
 
-  return Promise.all(
+  const stories = await Promise.all(
     topstories.splice(offset, limit).map((id) =>
       fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`, {
         next: {
@@ -22,6 +22,8 @@ export const getTopStories = async (
       }).then((res) => res.json())
     )
   );
+
+  return { data: stories, left: topstories.length - offset - limit };
 };
 
 export const getStory = async (id: number): Promise<Story> => {
