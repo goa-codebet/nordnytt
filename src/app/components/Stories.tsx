@@ -3,19 +3,43 @@
 import { getTopStories } from "@/services/hn";
 import { Story } from "@/types";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function Stories() {
-  const [stories, setStories] = useState<Story[] | null>(null);
+  const [stories, setStories] = useState<Story[]>([]);
+  const [page, setPage] = useState<number>(1);
+
+  const getStories = useCallback(async (page: number) => {
+    const limit = 10;
+    const newStories = await getTopStories(limit, (page - 1) * limit);
+    setStories((prev) => {
+      return [...prev, ...newStories];
+    });
+  }, []);
 
   useEffect(() => {
-    const fetchStories = async () => {
-      const topStories = await getTopStories();
-      setStories(topStories);
-    };
+    getStories(1);
+  }, [getStories]);
 
-    fetchStories();
-  }, []);
+  const handleScroll = useCallback(() => {
+    const bottom =
+      Math.ceil(window.innerHeight + window.scrollY) >=
+      document.documentElement.scrollHeight - 200;
+    if (bottom) {
+      setPage((prevPage) => {
+        const nextPage = prevPage + 1;
+        getStories(nextPage);
+        return nextPage;
+      });
+    }
+  }, [getStories]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
 
   return (
     <main>
