@@ -7,7 +7,6 @@ export default function useStories() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [_page, setPage] = useState<number>(1);
-
   const getStories = async (page: number) => {
     if (loading) return;
     setLoading(true);
@@ -39,12 +38,13 @@ export default function useStories() {
       },
       { threshold: 1 }
     );
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
     }
     return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
       }
     };
   }, [observerTarget]);
